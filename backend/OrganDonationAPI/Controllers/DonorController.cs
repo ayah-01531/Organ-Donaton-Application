@@ -155,6 +155,13 @@ public class DonorController : ControllerBase
         }
 
         var relativePath = $"/uploads/medical-reports/{uniqueFileName}";
+        var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+        var donor = await _context.Donors.FirstOrDefaultAsync(d => d.UserId == userId);
+        if (donor != null)
+        {
+            donor.MedicalReportsPath = relativePath;
+            await _context.SaveChangesAsync();
+        }
         return Ok(new { path = relativePath, message = "File uploaded successfully." });
     }
 
